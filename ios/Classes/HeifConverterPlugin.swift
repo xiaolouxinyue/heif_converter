@@ -23,7 +23,7 @@ public class HeifConverterPlugin: NSObject, FlutterPlugin {
       }
       if(output == nil || output!.isEmpty){
         if(format != nil && !format!.isEmpty){
-          output = NSTemporaryDirectory().appendingFormat("%d.%s", Date().timeIntervalSince1970 * 1000, format!)
+          output = NSTemporaryDirectory().appendingFormat("%d.%@", Date().timeIntervalSince1970 * 1000, format!)
         } else {
           result(FlutterError(code: "illegalArgument", message: "Output path and format is blank.", details: nil))
           break
@@ -43,10 +43,25 @@ public class HeifConverterPlugin: NSObject, FlutterPlugin {
       var imageData: Data?
       if (output.hasSuffix(".jpg") || output.hasSuffix(".jpeg")) {
         imageData = image!.jpegData(compressionQuality: 1.0)
+      } else if (output.hasSuffix(".png")) {
+        imageData = image?.flattenedPngData()
       } else {
-        imageData = image!.pngData()
+        return nil
       }
       FileManager.default.createFile(atPath: output, contents: imageData, attributes: nil)
       return output
   }
+}
+
+extension UIImage {
+    func flattenedPngData(isOpaque: Bool = true) -> Data? { 
+      flattened(isOpaque: isOpaque).pngData()
+    }
+    
+    func flattened(isOpaque: Bool = true) -> UIImage {
+        if imageOrientation == .up { return self }
+        let format = imageRendererFormat
+        format.opaque = isOpaque
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in draw(at: .zero) }
+    }
 }
