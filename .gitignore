@@ -54,3 +54,6 @@ app.*.map.json
 # CMake
 */cmake-build
 */cmake-build-*
+example/macos/Runner.xcodeproj/project.xcworkspace/xcshareddata
+example/macos/Runner.xcodeproj/xcshareddata
+example/macos/Runner.xcworkspace/xcshareddata
